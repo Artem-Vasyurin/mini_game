@@ -1,0 +1,53 @@
+using UnityEngine;
+
+public class FishingGame : MonoBehaviour
+{
+    public Transform area; // Область, включая полоску
+    public Transform bar; // Полоска, которую нужно удерживать
+
+    public float areaSpeed = 2f; // Скорость перемещения области по вертикали
+    public float areaHeight = 5f; // Высота области
+
+    private float areaTop; // Верхняя граница области
+    private float areaBottom; // Нижняя граница области
+
+    private bool isGameOver = false; // Флаг окончания игры
+
+    void Start()
+    {
+        float barHeight = bar.localScale.y;
+
+        areaTop = area.position.y + areaHeight / 2f - barHeight / 2f;
+        areaBottom = area.position.y - areaHeight / 2f + barHeight / 2f;
+    }
+
+    void Update()
+    {
+        if (!isGameOver)
+        {
+            MoveArea();
+            CheckBarPosition();
+        }
+    }
+
+    void MoveArea()
+    {
+        float newYPosition = area.position.y + areaSpeed * Time.deltaTime;
+        if (newYPosition >= areaTop || newYPosition <= areaBottom)
+        {
+            // Если область достигла верхней или нижней границы, меняем направление движения
+            areaSpeed *= -1f;
+        }
+
+        area.position += new Vector3(0f, areaSpeed * Time.deltaTime, 0f);
+    }
+
+    void CheckBarPosition()
+    {
+        if (bar.position.y <= areaBottom || bar.position.y >= areaTop)
+        {
+            Debug.Log("Игра окончена");
+            isGameOver = true;
+        }
+    }
+}
